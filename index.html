@@ -1,0 +1,1815 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>阿瓦隆号 · 冷聚变发动机质检 | 工程心理学实验</title>
+<style>
+/* ============================================================
+   主题：阿瓦隆号 / 冷聚变发动机质检
+   注意：橙色与蓝色只用于实验刺激；界面装饰使用深蓝灰 + 金色。
+   ============================================================ */
+:root{
+  --bg:#0B1220;
+  --panel:#121B2E;
+  --panel-2:#0F1728;
+  --panel-3:#0C1526;
+  --gold:#C8A44A;
+  --gold-2:#E2C170;
+  --ink:#E6EDF7;
+  --muted:#98A5BA;
+  --line:rgba(200,164,74,.26);
+  --line-soft:rgba(255,255,255,.08);
+  --orange:#E8833A;
+  --blue:#3B82F6;
+  --series-1:#3987e5;
+  --ok:#3FBF7F;
+  --bad:#E05252;
+  --mono:ui-monospace,"Cascadia Mono","SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  --sans:system-ui,-apple-system,"Segoe UI","Microsoft YaHei","PingFang SC",sans-serif;
+  --radius:16px;
+}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{
+  margin:0;
+  background:
+    radial-gradient(circle at 16% 0%, rgba(57,135,229,.10), transparent 38%),
+    radial-gradient(circle at 84% 8%, rgba(200,164,74,.08), transparent 34%),
+    var(--bg);
+  color:var(--ink);
+  font-family:var(--sans);
+  -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; opacity:.5;
+  background-image:
+    radial-gradient(1px 1px at 12% 18%, rgba(255,255,255,.85), transparent 60%),
+    radial-gradient(1px 1px at 72% 12%, rgba(255,255,255,.65), transparent 60%),
+    radial-gradient(1px 1px at 38% 62%, rgba(255,255,255,.5), transparent 60%),
+    radial-gradient(1px 1px at 86% 74%, rgba(255,255,255,.6), transparent 60%),
+    radial-gradient(1px 1px at 54% 34%, rgba(255,255,255,.45), transparent 60%),
+    radial-gradient(1px 1px at 22% 82%, rgba(255,255,255,.5), transparent 60%),
+    radial-gradient(1px 1px at 66% 88%, rgba(255,255,255,.4), transparent 60%);
+}
+a{color:var(--gold-2)}
+button{font-family:inherit}
+.mono{font-family:var(--mono)}
+.gold{color:var(--gold-2)}
+.muted{color:var(--muted)}
+.ok{color:var(--ok)}
+.bad{color:var(--bad)}
+.hidden{display:none !important}
+
+.topbar{
+  max-width:1040px;margin:0 auto;padding:18px 22px 8px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--mono);letter-spacing:.14em;font-size:12px;color:var(--muted)}
+.brand .dot{width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 12px rgba(200,164,74,.8)}
+.route{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:10px;color:var(--muted)}
+.route-bar{width:112px;height:4px;background:#1b2740;border-radius:4px;overflow:hidden}
+.route-bar i{display:block;width:64%;height:100%;background:var(--gold)}
+main{max-width:1040px;margin:0 auto;padding:10px 22px 70px}
+
+.screen{display:none}
+.screen.active{display:block}
+.card{
+  background:linear-gradient(180deg, rgba(18,27,46,.98), rgba(15,23,40,.98));
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:26px 30px;
+  box-shadow:0 24px 70px rgba(0,0,0,.36);
+  margin-bottom:16px;
+}
+.hero-card{
+  background:linear-gradient(180deg, rgba(18,27,46,.99), rgba(15,23,40,.99));
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:40px 42px;
+  box-shadow:0 30px 90px rgba(0,0,0,.45);
+  position:relative;overflow:hidden;
+}
+.hero-card::after{
+  content:"";position:absolute;right:-120px;top:-120px;width:320px;height:320px;border-radius:50%;
+  background:radial-gradient(circle, rgba(200,164,74,.16), transparent 65%);pointer-events:none;
+}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--gold);text-transform:uppercase;margin-bottom:10px}
+h1,h2,h3{margin:0 0 12px;line-height:1.25;font-weight:700}
+h1{font-size:clamp(26px,4vw,38px);letter-spacing:-.01em}
+h2{font-size:clamp(22px,3vw,30px)}
+h3{font-size:19px}
+.lede{font-size:16px;line-height:1.75;color:#CBD6E8;margin:0 0 16px}
+p{line-height:1.7}
+.fine{font-size:12px;color:var(--muted);line-height:1.65}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.spacer{flex:1}
+
+.btn{
+  font:inherit;font-weight:600;border-radius:10px;padding:12px 22px;border:1px solid transparent;
+  cursor:pointer;transition:background .15s,border-color .15s,transform .15s;
+}
+.btn:hover{transform:translateY(-1px)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.btn-primary{background:var(--gold);color:#101826}
+.btn-primary:hover{background:var(--gold-2)}
+.btn-ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn-ghost:hover{border-color:var(--gold)}
+.btn-sm{padding:8px 14px;font-size:13px;border-radius:8px}
+.keycap{
+  display:inline-block;font-family:var(--mono);font-size:13px;line-height:1;
+  border:1px solid var(--line);border-bottom-width:3px;border-radius:6px;
+  padding:5px 9px;background:#0d1526;color:var(--gold-2);
+}
+.keyrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:14px 0;font-size:14px;color:var(--muted)}
+.keyrow .keycap{font-size:14px}
+.notice{
+  border-left:4px solid var(--gold);
+  background:rgba(200,164,74,.08);
+  padding:12px 16px;border-radius:8px;margin:16px 0;
+  font-size:14px;line-height:1.7;color:#D7E1F0;
+}
+.warn-box{
+  border:1px solid rgba(224,82,82,.55);
+  background:rgba(224,82,82,.10);
+  color:#FFD7D7;border-radius:10px;padding:12px 14px;margin:0 0 16px;font-size:13px;line-height:1.65;
+}
+.check{display:flex;align-items:flex-start;gap:10px;margin:18px 0;font-size:14px;line-height:1.6;color:#D7E1F0;cursor:pointer}
+.check input{margin-top:4px;width:18px;height:18px;accent-color:var(--gold)}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin:18px 0}
+label.field{display:flex;flex-direction:column;gap:7px;font-size:13px;color:var(--muted)}
+select{
+  font:inherit;color:var(--ink);background:#0d1526;border:1px solid rgba(255,255,255,.16);
+  border-radius:9px;padding:10px 12px;outline:none;
+}
+select:focus{border-color:var(--gold)}
+.pid-big{font-family:var(--mono);font-size:32px;color:var(--gold-2);letter-spacing:.08em}
+
+/* ---------- 任务区 ---------- */
+.task-shell{
+  background:linear-gradient(180deg, rgba(18,27,46,.98), rgba(15,23,40,.98));
+  border:1px solid var(--line);border-radius:20px;padding:18px 22px 22px;
+  box-shadow:0 24px 70px rgba(0,0,0,.36);
+}
+.task-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;font-size:13px;color:var(--muted)}
+.task-bar b{color:var(--ink);font-weight:600}
+.progress{height:5px;background:#0b1424;border-radius:5px;overflow:hidden;margin:12px 0 6px}
+.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--gold-2));transition:width .2s linear}
+.stage{display:none;min-height:430px;padding:8px 0 0}
+.stage.active{display:block}
+.stage-top{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:12px;color:var(--muted);padding:0 2px 10px}
+.stage-bottom{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--muted);padding-top:14px}
+.stage-bottom .keycap{font-size:13px}
+
+/* 搜索 */
+.search-wrap{position:relative;width:min(440px,88vw);aspect-ratio:1/1;margin:10px auto 6px}
+.search-grid{
+  position:absolute;inset:0;display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);
+  gap:2px;padding:8px;background:rgba(8,14,26,.92);border:1px solid var(--line);border-radius:14px;
+}
+.cell{position:relative;border-radius:2px}
+.cell.cued{background:rgba(200,164,74,.16);outline:1px solid rgba(200,164,74,.5);outline-offset:-1px}
+.item{position:absolute;inset:18%;box-shadow:0 0 10px rgba(0,0,0,.25)}
+.item.circle{border-radius:50%}
+.item.orange{background:var(--orange);box-shadow:0 0 12px rgba(232,131,58,.28)}
+.item.blue{background:var(--blue);box-shadow:0 0 12px rgba(59,130,246,.24)}
+.fix{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  font-family:var(--mono);font-size:44px;color:var(--gold-2);line-height:1;z-index:5;
+  text-shadow:0 0 18px rgba(226,193,112,.5);
+}
+.feedback{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  z-index:6;text-align:center;font-size:24px;font-weight:700;white-space:nowrap;
+}
+.feedback .fb-sub{display:block;font-size:13px;font-weight:500;color:var(--muted);margin-top:6px;white-space:normal}
+.feedback .ok{color:var(--ok)}
+.feedback .bad{color:var(--bad)}
+
+/* Flanker */
+.flanker-wrap{position:relative;min-height:300px;display:flex;align-items:center;justify-content:center}
+.flanker-row{
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:clamp(38px,8.5vw,58px);line-height:1;color:#F6F9FF;letter-spacing:0;
+}
+.flanker-row.near{gap:8px}
+.flanker-row.far{gap:clamp(30px,10vw,76px)}
+.flanker-row span{display:inline-block;min-width:.72em;text-align:center}
+
+/* Cleveland-McGill */
+.cm-wrap{display:flex;flex-direction:column;align-items:center;gap:16px;padding:4px 0 0}
+.cm-chart{width:min(300px,80vw);height:auto}
+.cm-controls{width:min(460px,90vw);display:flex;flex-direction:column;gap:10px}
+.cm-readout{font-size:14px;color:var(--muted);text-align:center}
+.cm-readout b{font-family:var(--mono);font-size:22px;color:var(--gold-2);margin:0 2px}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:9px;border-radius:6px;
+  background:#1b2740;outline:none;margin:4px 0;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;width:24px;height:24px;border-radius:50%;
+  background:var(--gold);border:3px solid var(--bg);cursor:pointer;
+  box-shadow:0 0 0 1px rgba(200,164,74,.6),0 0 16px rgba(200,164,74,.35);
+}
+input[type=range]::-moz-range-thumb{
+  width:20px;height:20px;border-radius:50%;background:var(--gold);border:3px solid var(--bg);cursor:pointer;
+}
+.cm-wrap .feedback{position:static;transform:none;min-height:22px;font-size:14px;font-weight:500;color:#D7E1F0}
+.cm-wrap .feedback b{font-family:var(--mono);color:var(--gold-2)}
+
+/* ---------- 报告 ---------- */
+.report-head h1{margin-bottom:6px}
+.report-head .pid-big{font-size:clamp(28px,5vw,44px)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:14px 0}
+.stat{background:#0f1a2d;border:1px solid var(--line-soft);border-radius:12px;padding:12px 14px}
+.stat b{display:block;font-family:var(--mono);font-size:24px;color:var(--gold-2);line-height:1.2;font-weight:700}
+.stat b small{font-size:11px;color:var(--muted);font-weight:500;margin-left:4px;font-family:var(--sans)}
+.stat span{display:block;font-size:12px;color:var(--muted);margin-top:5px}
+table{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line-soft);text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:600;font-size:12px;letter-spacing:.02em}
+td.num,th.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums}
+.data-table{margin-top:12px}
+.data-table summary{cursor:pointer;color:var(--muted);font-size:12px;font-family:var(--mono);padding:6px 0}
+.data-table summary:hover{color:var(--gold-2)}
+.chart{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.chart-row{display:grid;grid-template-columns:150px 1fr 110px;gap:10px;align-items:center}
+.chart-label{font-size:13px;color:var(--muted)}
+.chart-track{position:relative;height:16px;background:#0f1a2d;border-radius:4px;overflow:hidden}
+.chart-fill{position:absolute;top:0;bottom:0;background:var(--series-1);border-radius:4px}
+.chart-track .zero{position:absolute;left:50%;top:0;bottom:0;width:1px;background:rgba(255,255,255,.22)}
+.chart-value{font-family:var(--mono);font-size:12px;color:var(--ink);text-align:right;font-variant-numeric:tabular-nums}
+.chart-title{font-size:14px;font-weight:600;color:var(--ink);margin:18px 0 4px}
+.chart-title .muted{font-weight:400;font-size:12px;margin-left:6px}
+.group-block{margin:8px 0 22px}
+.group-note{font-size:12px;color:var(--muted);margin:4px 0 0}
+.upload-list{display:flex;flex-direction:column;gap:8px;margin:10px 0 16px}
+.upload-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:13px;padding:9px 0;border-bottom:1px solid var(--line-soft)}
+.upload-row .mono{min-width:82px;color:var(--muted)}
+.upload-row .btn{margin-left:auto}
+.recs{margin:8px 0 0 18px;padding:0;line-height:1.9;font-size:14px;color:#D7E1F0}
+.recs li{margin:6px 0}
+.end-note{text-align:center;color:var(--muted);font-size:13px;padding:18px 0 0;font-family:var(--mono)}
+.brief-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.brief-note{
+  border-left:3px solid rgba(200,164,74,.6);background:rgba(200,164,74,.06);
+  padding:10px 14px;border-radius:6px;font-size:13px;line-height:1.7;color:#CBD6E8;margin:14px 0;
+}
+.orange-ink{color:var(--orange)}
+.blue-ink{color:#7FB0FF}
+
+/* modal */
+.modal-back{
+  position:fixed;inset:0;background:rgba(5,9,18,.78);backdrop-filter:blur(3px);
+  display:flex;align-items:center;justify-content:center;z-index:80;padding:20px;
+}
+.modal{
+  width:min(520px,92vw);background:linear-gradient(180deg,#15203a,#101a2e);
+  border:1px solid var(--line);border-radius:16px;padding:26px 28px;
+  box-shadow:0 30px 90px rgba(0,0,0,.6);
+}
+.modal h3{font-size:20px;margin-bottom:8px}
+.modal p{font-size:14px;line-height:1.7;color:#CBD6E8;margin:0 0 18px}
+.modal .btn{width:100%}
+
+@media(max-width:700px){
+  .topbar{padding:14px 16px 6px}
+  .route{display:none}
+  main{padding:8px 14px 60px}
+  .card,.hero-card{padding:20px 18px}
+  .hero-card{padding:26px 20px}
+  .task-shell{padding:14px 12px 18px}
+  .chart-row{grid-template-columns:106px 1fr 78px;gap:8px}
+  .chart-label{font-size:12px}
+  .chart-value{font-size:11px}
+  .search-wrap{width:min(420px,92vw)}
+  .stage{min-height:380px}
+}
+@media(prefers-reduced-motion:reduce){
+  *{transition:none !important;animation:none !important}
+}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="brand"><span class="dot"></span> AVALON · 阿瓦隆号</div>
+  <div class="route">
+    <span>航行第 3,842 天</span>
+    <div class="route-bar"><i></i></div>
+    <span>曙光殖民地</span>
+  </div>
+</div>
+
+<main>
+  <!-- ===================== 0. 知情同意 ===================== -->
+  <section id="screen-consent" class="screen active">
+    <div class="hero-card">
+      <div class="eyebrow">工程心理学 · 作业二</div>
+      <h1>阿瓦隆号 · 冷聚变发动机质检</h1>
+      <p class="lede">
+        你将扮演「阿瓦隆号」动力舱的质检员，完成三项例行检查：
+        <b>组件巡检</b>、<b>流向确认</b>、<b>输出读数</b>。
+        这是一个关于注意与显示设计的课程实验，不评价个人能力。
+      </p>
+
+      <div id="configWarn" class="warn-box hidden">
+        <b>开发者提示：</b>PROJECT 仍是占位符 <code>XXXXXX</code>。
+        请把 <code>index.html</code> 顶部的 PROJECT 改成你在
+        <code>/hw2</code> 创建项目后得到的 6 位项目码，否则数据无法上传。被试请勿在此状态下开始。
+      </div>
+      <div id="testWarn" class="notice hidden">
+        <b>测试模式：</b>本次运行的数据会以 <code>test_</code> 前缀提交。
+        正式收数前请在 <code>/hw2</code>「我的项目」里清空测试实验，不要用测试数据凑人数。
+      </div>
+
+      <div class="notice">
+        <b>知情同意</b><br>
+        · 时长约 15 分钟，需要在电脑上使用键盘完成。<br>
+        · 开始前请把输入法切换为英文（关闭中文输入法），否则 J / F 和方向键可能无法识别。<br>
+        · 全程匿名：不收集姓名、学号；工号由系统随机生成，仅用于把三项任务的数据归到一起。<br>
+        · 数据会上传到课程「注意实验室」服务器，仅用于本课程的教学分析。<br>
+        · 你可以随时关闭页面退出；未提交的数据不会被记录。<br>
+        · 请在安静环境下完成，并保持本页面在前台；刷新页面会丢失进度。<br>
+        · 飞船与航行设定为虚构情境，不是影视作品改编。
+      </div>
+
+      <label class="check">
+        <input type="checkbox" id="consentCheck">
+        <span>我已阅读以上说明，自愿参与本次实验。</span>
+      </label>
+      <button id="btnConsent" class="btn btn-primary" disabled>继续</button>
+      <p class="fine" style="margin-top:14px">如有疑问，请联系课程助教。</p>
+    </div>
+  </section>
+
+  <!-- ===================== 1. 登记 ===================== -->
+  <section id="screen-intake" class="screen">
+    <div class="card">
+      <div class="eyebrow">登舰登记</div>
+      <h2>你的匿名工号</h2>
+      <p class="pid-big" id="pidText">Q-XXXX</p>
+      <p class="muted">请截图或记下工号。报告页会再次显示；不需要填写姓名或学号。</p>
+
+      <div class="form-grid">
+        <label class="field">年龄区间
+          <select id="age">
+            <option value="u18">18 岁以下</option>
+            <option value="18-22" selected>18–22</option>
+            <option value="23-30">23–30</option>
+            <option value="31-45">31–45</option>
+            <option value="46+">46 岁以上</option>
+          </select>
+        </label>
+        <label class="field">色觉
+          <select id="colorVision">
+            <option value="normal" selected>正常</option>
+            <option value="uncertain">不确定</option>
+            <option value="deficient">有色觉障碍</option>
+          </select>
+        </label>
+        <label class="field">设备
+          <select id="device">
+            <option value="laptop" selected>笔记本电脑</option>
+            <option value="desktop">台式电脑</option>
+            <option value="tablet">平板</option>
+            <option value="phone">手机</option>
+          </select>
+        </label>
+      </div>
+      <p id="deviceWarn" class="warn-box hidden">
+        本实验的第二、三项任务需要键盘（方向键、J/F 键）。平板或手机可能无法完成，建议改用电脑。
+      </p>
+      <p class="muted" style="font-size:13px">开始前请关闭中文输入法（切换到英文），确保按键能被识别。</p>
+      <button id="btnBegin" class="btn btn-primary">登舰，开始值班</button>
+    </div>
+  </section>
+
+  <!-- ===================== 2. 任务简报 ===================== -->
+  <section id="screen-brief" class="screen">
+    <div class="card" id="briefCard"></div>
+  </section>
+
+  <!-- ===================== 3. 任务舞台 ===================== -->
+  <section id="screen-task" class="screen">
+    <div class="task-shell">
+      <div class="task-bar">
+        <div><span class="mono muted" id="taskIndex">值班日志 01 / 03</span> · <b id="taskTitle">组件巡检</b></div>
+        <div class="mono muted" id="taskProgress">准备中</div>
+      </div>
+      <div class="progress"><i id="progressFill"></i></div>
+      <div id="stageArea">
+        <!-- 搜索 -->
+        <div id="stage-search" class="stage">
+          <div class="stage-top">
+            <span class="mono">M-01 模块阵列</span>
+            <span class="mono" id="searchScan">扫描提示：—</span>
+          </div>
+          <div class="search-wrap">
+            <div id="searchGrid" class="search-grid"></div>
+            <div id="searchFix" class="fix">+</div>
+            <div id="searchFb" class="feedback hidden"></div>
+          </div>
+          <div class="stage-bottom">
+            <span class="keycap">J</span><span>找到故障</span>
+            <span class="keycap">F</span><span>确认无故障</span>
+          </div>
+        </div>
+
+        <!-- Flanker -->
+        <div id="stage-flanker" class="stage">
+          <div class="stage-top">
+            <span class="mono">主冷却回路 · 流向确认</span>
+            <span class="mono muted">只响应中央箭头</span>
+          </div>
+          <div class="flanker-wrap">
+            <div id="flankerRow" class="flanker-row"></div>
+            <div id="flankerFix" class="fix">+</div>
+            <div id="flankerFb" class="feedback hidden"></div>
+          </div>
+          <div class="stage-bottom">
+            <span class="keycap">←</span><span>左</span>
+            <span class="keycap">→</span><span>右</span>
+          </div>
+        </div>
+
+        <!-- C-M -->
+        <div id="stage-cm" class="stage">
+          <div class="stage-top">
+            <span class="mono">反应堆输出 · 估读</span>
+            <span class="mono muted">拖动滑块后确认</span>
+          </div>
+          <div class="cm-wrap">
+            <div id="cmChart" class="cm-chart"></div>
+            <div class="cm-controls">
+              <div class="cm-readout">估计占比 <b id="cmValue">50</b>%</div>
+              <input id="cmSlider" type="range" min="0" max="100" step="1" value="50" aria-label="估计高亮部分占整体的百分比">
+              <button id="cmConfirm" class="btn btn-primary">确认</button>
+            </div>
+            <div id="cmFb" class="feedback hidden"></div>
+          </div>
+          <div class="stage-bottom">
+            <span class="keycap">拖拽</span><span>调整滑块</span>
+            <span class="keycap">Enter</span><span>确认</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 4. 任务间休息 ===================== -->
+  <section id="screen-break" class="screen">
+    <div class="card" id="breakCard"></div>
+  </section>
+
+  <!-- ===================== 5. 报告 ===================== -->
+  <section id="screen-report" class="screen">
+    <div id="reportBody"></div>
+  </section>
+</main>
+
+<!-- modal -->
+<div id="modal" class="modal-back hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal">
+    <h3 id="modalTitle">提示</h3>
+    <p id="modalText"></p>
+    <button id="modalBtn" class="btn btn-primary">继续</button>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   配置
+   ============================================================ */
+const PROJECT = new URLSearchParams(location.search).get('project') || 'NVTQ9T';
+// ↑ 正式项目码 NVTQ9T；已写入默认值，可通过 ?project=XXXXXX 临时覆盖。
+//   调试时也可以用 index.html?project=ABC234 临时覆盖。
+
+// 调试时加 ?test=1：实验名会变成 test_search / test_flanker / test_cm，
+// 正式收数前在 /hw2「我的项目」里清空这些测试实验即可。
+const TEST_MODE = new URLSearchParams(location.search).get('test') === '1';
+const expName = (key) => (TEST_MODE ? 'test_' + key : key);
+
+const LAB = (location.hostname === 'attention-lab-production.up.railway.app')
+  ? location.origin
+  : 'https://attention-lab-production.up.railway.app';
+
+const VERSION = 'avalon-hw2-1.0';
+const SEARCH_TIMEOUT = 4000;
+const FLANKER_TIMEOUT = 2000;
+const CM_TIMEOUT = 20000;
+const SEARCH_SETS = [8, 16, 24];
+
+/* ============================================================
+   小工具
+   ============================================================ */
+const $ = (s, root = document) => root.querySelector(s);
+const $$ = (s, root = document) => Array.from(root.querySelectorAll(s));
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const nextFrame = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+const rand = (n) => Math.floor(Math.random() * n);
+const shuffle = (a) => { for (let i = a.length - 1; i > 0; i--) { const j = rand(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const median = (a) => {
+  if (!a.length) return null;
+  const b = [...a].sort((x, y) => x - y);
+  const m = Math.floor(b.length / 2);
+  return b.length % 2 ? b[m] : (b[m - 1] + b[m]) / 2;
+};
+const mean = (a) => (a.length ? a.reduce((x, y) => x + y, 0) / a.length : null);
+const fmt = (v, d = 0) => (v == null || !Number.isFinite(v)) ? '—' : v.toFixed(d);
+const escapeHtml = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+function slope(points) {
+  const pts = points.filter((p) => p && p[0] != null && p[1] != null);
+  if (pts.length < 2) return null;
+  const n = pts.length;
+  const sx = pts.reduce((s, p) => s + p[0], 0);
+  const sy = pts.reduce((s, p) => s + p[1], 0);
+  const sxx = pts.reduce((s, p) => s + p[0] * p[0], 0);
+  const sxy = pts.reduce((s, p) => s + p[0] * p[1], 0);
+  const den = n * sxx - sx * sx;
+  return den ? (n * sxy - sx * sy) / den : null;
+}
+
+function makePid() {
+  const chars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+  let s = '';
+  try {
+    const a = new Uint32Array(4);
+    crypto.getRandomValues(a);
+    for (let i = 0; i < 4; i++) s += chars[a[i] % chars.length];
+  } catch (e) {
+    for (let i = 0; i < 4; i++) s += chars[rand(chars.length)];
+  }
+  return 'Q-' + s;
+}
+
+function projectConfigured() {
+  return /^[A-Za-z0-9]{6}$/.test(PROJECT) && PROJECT !== 'XXXXXX';
+}
+
+async function fetchWithTimeout(url, opts = {}, ms = 15000) {
+  const ctrl = new AbortController();
+  const to = setTimeout(() => ctrl.abort(), ms);
+  try {
+    return await fetch(url, { ...opts, signal: ctrl.signal });
+  } finally {
+    clearTimeout(to);
+  }
+}
+
+let sessionActive = false;
+window.addEventListener('beforeunload', (e) => {
+  if (!sessionActive) return;
+  e.preventDefault();
+  e.returnValue = '';
+});
+
+/* ============================================================
+   状态
+   ============================================================ */
+const state = {
+  pid: makePid(),
+  age: '',
+  colorVision: '',
+  device: '',
+  order: [],
+  raw: {},        // 正式试次（含渲染字段）
+  records: {},    // 提交用的扁平记录
+  uploads: {},
+  startedAt: new Date().toISOString(),
+};
+
+const TASKS = {
+  search: {
+    name: '组件巡检',
+    code: 'M-01',
+    practice: 10,
+    total: 160,
+    brief: `
+      <div class="eyebrow">组件巡检 · 任务简报</div>
+      <h2>在模块阵列中找出故障模块</h2>
+      <p class="lede">
+        动力舱的 64 个模块位需要巡检。故障模块显示为 <b class="orange-ink">橙色方块</b>；
+        正常模块显示为 <b class="orange-ink">橙色圆形</b>或 <b class="blue-ink">蓝色方块</b>。
+      </p>
+      <div class="keyrow">
+        <span class="keycap">J</span><span>找到故障</span>
+        <span class="keycap">F</span><span>确认无故障</span>
+      </div>
+      <div class="brief-note">
+        面板出现前，扫描系统有时会短暂高亮一个区域。若面板中<b>存在</b>故障，故障一定在高亮区域内；
+        但高亮区域内也可能没有故障。
+      </div>
+      <p class="muted">练习 10 次（有反馈）· 正式 160 次（含 16 次无故障面板）· 约 6 分钟</p>
+    `,
+  },
+  flanker: {
+    name: '流向确认',
+    code: 'F-02',
+    practice: 10,
+    total: 60,
+    brief: `
+      <div class="eyebrow">流向确认 · 任务简报</div>
+      <h2>只响应中央主通道的流向</h2>
+      <p class="lede">
+        主冷却回路中央会显示一个流向箭头。相邻通道也会显示箭头，但它们与本次确认无关。
+        请<b>只根据中央箭头方向</b>按键：
+      </p>
+      <div class="keyrow">
+        <span class="keycap">←</span><span>左</span>
+        <span class="keycap">→</span><span>右</span>
+      </div>
+      <div class="brief-note">
+        相邻箭头可能与中央同向，也可能反向；它们的间距也会变化。
+        请尽量忽略它们，只判断中央。
+      </div>
+      <p class="muted">练习 10 次（有反馈）· 正式 60 次 · 约 3 分钟</p>
+    `,
+  },
+  cm: {
+    name: '输出读数',
+    code: 'R-03',
+    practice: 6,
+    total: 60,
+    brief: `
+      <div class="eyebrow">输出读数 · 任务简报</div>
+      <h2>估读反应堆输出的比例</h2>
+      <p class="lede">
+        系统会用<b>条形图</b>或<b>饼图</b>显示反应堆输出或冷却剂储备的占比，
+        其中高亮部分是当前读数。
+      </p>
+      <div class="brief-note">
+        请拖动滑块估计高亮部分占整体的百分比（0–100），然后按 <b>Enter</b> 或点击「确认」。
+        有些图形会带参考刻度，有些不会。
+      </div>
+      <p class="muted">练习 6 次（会显示真实值）· 正式 60 次 · 约 4 分钟</p>
+    `,
+  },
+};
+
+/* ============================================================
+   界面
+   ============================================================ */
+function showScreen(name) {
+  $$('.screen').forEach((s) => s.classList.toggle('active', s.id === 'screen-' + name));
+  window.scrollTo(0, 0);
+}
+function showStage(key) {
+  ['search', 'flanker', 'cm'].forEach((k) => {
+    const el = document.getElementById('stage-' + k);
+    if (el) el.classList.toggle('active', k === key);
+  });
+}
+function hideStages() {
+  ['search', 'flanker', 'cm'].forEach((k) => {
+    const el = document.getElementById('stage-' + k);
+    if (el) el.classList.remove('active');
+  });
+}
+function setProgress(label, frac) {
+  const t = $('#taskProgress');
+  if (t) t.textContent = label;
+  const f = $('#progressFill');
+  if (f) f.style.width = Math.max(0, Math.min(1, frac || 0)) * 100 + '%';
+}
+function waitButton(id) {
+  return new Promise((res) => {
+    const b = document.getElementById(id);
+    if (!b) return res();
+    b.onclick = () => { b.onclick = null; res(); };
+  });
+}
+function modal(title, text, btnLabel) {
+  return new Promise((res) => {
+    $('#modalTitle').textContent = title;
+    $('#modalText').innerHTML = text;
+    $('#modalBtn').textContent = btnLabel || '继续';
+    $('#modal').classList.remove('hidden');
+    const onKey = (e) => {
+      if (!(e.code === 'Enter' || e.code === 'Space' || e.key === 'Enter' || e.key === ' ')) return;
+      e.preventDefault();
+      $('#modalBtn').click();
+    };
+    document.addEventListener('keydown', onKey);
+    $('#modalBtn').onclick = () => {
+      document.removeEventListener('keydown', onKey);
+      $('#modal').classList.add('hidden');
+      $('#modalBtn').onclick = null;
+      res();
+    };
+  });
+}
+async function ensureVisible() {
+  while (document.hidden) await sleep(300);
+}
+
+// 记录一个试次期间是否切到过后台（切过就标记无效，避免计时和线索被污染）
+function watchHidden() {
+  const st = { hidden: document.hidden };
+  const fn = () => { if (document.hidden) st.hidden = true; };
+  document.addEventListener('visibilitychange', fn);
+  st.stop = () => document.removeEventListener('visibilitychange', fn);
+  return st;
+}
+
+/* ============================================================
+   试次生成
+   ============================================================ */
+function arrow(dir) { return dir === 'L' ? '←' : '→'; }
+
+/* -------- 搜索 -------- */
+function quadrantCells(q) {
+  const out = [];
+  for (let i = 0; i < 64; i++) {
+    const r = Math.floor(i / 8), c = i % 8;
+    const top = q < 2, left = (q % 2 === 0);
+    if (((r < 4) === top) && ((c < 4) === left)) out.push(i);
+  }
+  return out;
+}
+function makeSearchTrial(type, cue, set, present) {
+  const q = cue ? rand(4) : null;
+  let target = -1;
+  if (present) {
+    if (cue) {
+      const qs = quadrantCells(q);
+      target = qs[rand(qs.length)];
+    } else {
+      target = rand(64);
+    }
+  }
+  const pool = [];
+  for (let i = 0; i < 64; i++) if (i !== target) pool.push(i);
+  shuffle(pool);
+  const pos = present ? [target, ...pool.slice(0, set - 1)] : pool.slice(0, set);
+
+  const items = [];
+  if (present) items.push({ i: target, s: 'square', c: 'orange' });
+
+  if (type === 'feature') {
+    for (const p of pos) {
+      if (p === target) continue;
+      items.push({ i: p, s: 'square', c: 'blue' });
+    }
+  } else {
+    const distCount = present ? set - 1 : set;
+    const kinds = [];
+    for (let k = 0; k < distCount; k++) kinds.push(k % 2 === 0 ? 'circle' : 'square');
+    shuffle(kinds);
+    let k = 0;
+    for (const p of pos) {
+      if (p === target) continue;
+      const kind = kinds[k++] || 'square';
+      if (kind === 'circle') items.push({ i: p, s: 'circle', c: 'orange' });
+      else items.push({ i: p, s: 'square', c: 'blue' });
+    }
+  }
+
+  return {
+    type, cue, set, present,
+    cond: `${type}_${cue ? 'cue' : 'nocus'}_${set}`,
+    _q: q, _items: items,
+    resp: '', correct: 0, rt: null, timeout: 0, invalid: 0,
+  };
+}
+function makeSearchFormal() {
+  const list = [];
+  for (const type of ['feature', 'conjunction'])
+    for (const cue of [0, 1])
+      for (const set of SEARCH_SETS)
+        for (let i = 0; i < 12; i++) list.push(makeSearchTrial(type, cue, set, 1));
+  for (const type of ['feature', 'conjunction'])
+    for (const cue of [0, 1])
+      for (let i = 0; i < 4; i++) list.push(makeSearchTrial(type, cue, SEARCH_SETS[rand(3)], 0));
+  return shuffle(list);
+}
+function makeSearchPractice() {
+  const specs = [
+    ['feature', 0, 8, 1], ['feature', 1, 8, 1], ['feature', 0, 16, 1], ['feature', 1, 16, 1],
+    ['conjunction', 0, 8, 1], ['conjunction', 1, 8, 1], ['conjunction', 0, 16, 1], ['conjunction', 1, 16, 1],
+    ['feature', 0, 8, 0], ['conjunction', 1, 16, 0],
+  ];
+  return shuffle(specs.map(([type, cue, set, present]) => makeSearchTrial(type, cue, set, present)));
+}
+
+/* -------- Flanker -------- */
+function makeFlankerTrial(congruent, dist) {
+  return {
+    congruent, dist, dir: rand(2) ? 'L' : 'R',
+    cond: `${congruent ? 'con' : 'inc'}_${dist}`,
+    resp: '', correct: 0, rt: null, timeout: 0, invalid: 0,
+  };
+}
+function makeFlankerFormal() {
+  const list = [];
+  for (const congruent of [0, 1])
+    for (const dist of ['near', 'far'])
+      for (let i = 0; i < 15; i++) list.push(makeFlankerTrial(congruent, dist));
+  return shuffle(list);
+}
+function makeFlankerPractice() {
+  const specs = [];
+  for (const congruent of [0, 1])
+    for (const dist of ['near', 'far'])
+      for (let i = 0; i < 2; i++) specs.push([congruent, dist]);
+  specs.push([1, 'near'], [0, 'far']);
+  return shuffle(specs.map(([c, d]) => makeFlankerTrial(c, d)));
+}
+
+/* -------- Cleveland–McGill -------- */
+const CM_VALUES = [28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 34, 46, 58];
+function makeCMTrial(format, ticks, val) {
+  return {
+    format, ticks, val,
+    cond: `${format}_${ticks ? 'ticks' : 'noticks'}`,
+    est: null, err: null, rt: null, timeout: 0, invalid: 0,
+  };
+}
+function makeCMFormal() {
+  const list = [];
+  for (const format of ['bar', 'pie'])
+    for (const ticks of [0, 1]) {
+      const vals = shuffle([...CM_VALUES]);
+      for (let i = 0; i < 15; i++) list.push(makeCMTrial(format, ticks, vals[i]));
+    }
+  return shuffle(list);
+}
+function makeCMPractice() {
+  const specs = [
+    ['bar', 0, 32], ['bar', 1, 44], ['pie', 0, 58],
+    ['pie', 1, 36], ['bar', 0, 62], ['pie', 1, 48],
+  ];
+  return shuffle(specs.map(([f, t, v]) => makeCMTrial(f, t, v)));
+}
+
+/* ============================================================
+   响应等待
+   ============================================================ */
+function waitKeys(validCodes, timeoutMs, startTime) {
+  return new Promise((resolve) => {
+    let done = false;
+    let invalid = document.hidden;
+    let to = null;
+    const onVis = () => { if (document.hidden) invalid = true; };
+    const finish = (code) => {
+      if (done) return;
+      done = true;
+      if (to) clearTimeout(to);
+      window.removeEventListener('keydown', onKey);
+      document.removeEventListener('visibilitychange', onVis);
+      resolve({
+        code,
+        rt: code ? Math.round(performance.now() - startTime) : null,
+        timeout: code ? 0 : 1,
+        invalid: invalid ? 1 : 0,
+      });
+    };
+    const onKey = (e) => {
+      if (!validCodes.includes(e.code) || e.repeat) return;
+      e.preventDefault();
+      finish(e.code);
+    };
+    to = setTimeout(() => finish(null), timeoutMs);
+    window.addEventListener('keydown', onKey);
+    document.addEventListener('visibilitychange', onVis);
+  });
+}
+
+function waitCM(timeoutMs, startTime) {
+  return new Promise((resolve) => {
+    let done = false;
+    let invalid = document.hidden;
+    let to = null;
+    const onVis = () => { if (document.hidden) invalid = true; };
+    const finish = (est) => {
+      if (done) return;
+      done = true;
+      if (to) clearTimeout(to);
+      document.removeEventListener('keydown', onKey);
+      document.removeEventListener('visibilitychange', onVis);
+      $('#cmConfirm').onclick = null;
+      resolve({
+        est: est == null ? null : Math.round(est),
+        rt: est == null ? null : Math.round(performance.now() - startTime),
+        timeout: est == null ? 1 : 0,
+        invalid: invalid ? 1 : 0,
+      });
+    };
+    const onKey = (e) => {
+      if (!(e.code === 'Enter' || e.code === 'Space' || e.key === 'Enter' || e.key === ' ')) return;
+      e.preventDefault();
+      finish(Number($('#cmSlider').value));
+    };
+    to = setTimeout(() => finish(null), timeoutMs);
+    document.addEventListener('keydown', onKey);
+    document.addEventListener('visibilitychange', onVis);
+    $('#cmConfirm').onclick = () => finish(Number($('#cmSlider').value));
+  });
+}
+
+/* ============================================================
+   任务运行
+   ============================================================ */
+const searchCells = [];
+function initSearchGrid() {
+  const grid = $('#searchGrid');
+  for (let i = 0; i < 64; i++) {
+    const c = document.createElement('div');
+    c.className = 'cell';
+    grid.appendChild(c);
+    searchCells.push(c);
+  }
+}
+function clearSearch() {
+  for (const c of searchCells) {
+    c.innerHTML = '';
+    c.classList.remove('cued');
+  }
+}
+function markCue(q) {
+  for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) {
+    const top = q < 2, left = (q % 2 === 0);
+    if (((r < 4) === top) && ((c < 4) === left)) searchCells[r * 8 + c].classList.add('cued');
+  }
+}
+function clearCue() {
+  for (const c of searchCells) c.classList.remove('cued');
+}
+
+async function searchTrial(t, practice) {
+  const hw = watchHidden();
+  clearSearch();
+  $('#searchFb').classList.add('hidden');
+  $('#searchScan').textContent = '扫描提示：—';
+  $('#searchFix').classList.remove('hidden');
+  await sleep(500);
+
+  if (t.cue) {
+    markCue(t._q);
+    $('#searchScan').textContent = '扫描提示：' + ['左上', '右上', '左下', '右下'][t._q] + ' 区';
+  } else {
+    $('#searchScan').textContent = '扫描中…';
+  }
+  await sleep(300);
+  clearCue();
+  $('#searchScan').textContent = '扫描提示：—';
+  await sleep(200);
+
+  for (const it of t._items) {
+    const el = document.createElement('div');
+    el.className = 'item' + (it.s === 'circle' ? ' circle' : '') + (it.c === 'orange' ? ' orange' : ' blue');
+    searchCells[it.i].appendChild(el);
+  }
+  $('#searchFix').classList.add('hidden');
+  await nextFrame();
+  const t0 = performance.now();
+  const r = await waitKeys(['KeyJ', 'KeyF'], SEARCH_TIMEOUT, t0);
+
+  clearSearch();
+  t.resp = r.code === 'KeyJ' ? 'J' : r.code === 'KeyF' ? 'F' : '';
+  t.rt = r.rt;
+  t.timeout = r.timeout;
+  t.invalid = (hw.hidden || r.invalid) ? 1 : 0;
+  hw.stop();
+  t.correct = t.present ? (t.resp === 'J' ? 1 : 0) : (t.resp === 'F' ? 1 : 0);
+
+  if (practice) {
+    $('#searchFb').innerHTML = t.correct
+      ? '<span class="ok">✓</span>'
+      : `<span class="bad">✗</span><span class="fb-sub">${t.present ? '这里有故障模块，应报告故障' : '这里没有故障模块，应报告无故障'}</span>`;
+    $('#searchFb').classList.remove('hidden');
+    await sleep(650);
+    $('#searchFb').classList.add('hidden');
+  }
+  await sleep(350);
+}
+
+async function flankerTrial(t, practice) {
+  const hw = watchHidden();
+  const row = $('#flankerRow');
+  row.innerHTML = '';
+  row.className = 'flanker-row ' + t.dist;
+  $('#flankerFb').classList.add('hidden');
+  $('#flankerFix').classList.remove('hidden');
+  await sleep(400);
+
+  const f = t.congruent ? t.dir : (t.dir === 'L' ? 'R' : 'L');
+  row.innerHTML = `<span>${arrow(f)}</span><span>${arrow(t.dir)}</span><span>${arrow(f)}</span>`;
+  $('#flankerFix').classList.add('hidden');
+  await nextFrame();
+  const t0 = performance.now();
+  const r = await waitKeys(['ArrowLeft', 'ArrowRight'], FLANKER_TIMEOUT, t0);
+
+  row.innerHTML = '';
+  t.resp = r.code === 'ArrowLeft' ? 'L' : r.code === 'ArrowRight' ? 'R' : '';
+  t.rt = r.rt;
+  t.timeout = r.timeout;
+  t.invalid = (hw.hidden || r.invalid) ? 1 : 0;
+  hw.stop();
+  t.correct = t.resp === t.dir ? 1 : 0;
+
+  if (practice) {
+    $('#flankerFb').innerHTML = t.correct
+      ? '<span class="ok">✓</span>'
+      : '<span class="bad">✗</span><span class="fb-sub">请只看中央箭头</span>';
+    $('#flankerFb').classList.remove('hidden');
+    await sleep(600);
+    $('#flankerFb').classList.add('hidden');
+  }
+  await sleep(350);
+}
+
+function arcSlice(cx, cy, r, a0, a1) {
+  const rad = (d) => d * Math.PI / 180;
+  const x0 = cx + r * Math.cos(rad(a0));
+  const y0 = cy + r * Math.sin(rad(a0));
+  const x1 = cx + r * Math.cos(rad(a1));
+  const y1 = cy + r * Math.sin(rad(a1));
+  const large = (a1 - a0) > 180 ? 1 : 0;
+  return `M ${cx} ${cy} L ${x0} ${y0} A ${r} ${r} 0 ${large} 1 ${x1} ${y1} Z`;
+}
+function chartSVG(format, val, ticks) {
+  const gold = '#C8A44A';
+  const base = '#2A3550';
+  const line = '#8FA0BD';
+  if (format === 'bar') {
+    const x = 78, y = 30, w = 104, h = 220, bottom = y + h;
+    const fh = h * val / 100;
+    let tickLines = '';
+    if (ticks) {
+      for (const p of [25, 50, 75]) {
+        const yy = bottom - h * p / 100;
+        tickLines += `<line x1="${x - 14}" y1="${yy}" x2="${x + w + 14}" y2="${yy}" stroke="${line}" stroke-width="1.5" opacity=".7"/>`;
+      }
+    }
+    return `<svg viewBox="0 0 260 300" role="img" aria-label="条形图，高亮部分占比待估计">
+      <rect x="${x}" y="${y}" width="${w}" height="${h}" rx="4" fill="#0C1526" stroke="${line}" stroke-width="1.5"/>
+      <rect x="${x}" y="${bottom - fh}" width="${w}" height="${fh}" rx="3" fill="${gold}"/>
+      ${tickLines}
+      <line x1="${x - 14}" y1="${bottom}" x2="${x + w + 14}" y2="${bottom}" stroke="${line}" stroke-width="2"/>
+    </svg>`;
+  }
+  const cx = 130, cy = 150, r = 96;
+  const a0 = -90, a1 = -90 + 360 * val / 100;
+  const slice = arcSlice(cx, cy, r, a0, a1);
+  let tickLines = '';
+  if (ticks) {
+    for (const p of [25, 50, 75]) {
+      const a = (-90 + 360 * p / 100) * Math.PI / 180;
+      const x1 = cx + Math.cos(a) * (r + 4);
+      const y1 = cy + Math.sin(a) * (r + 4);
+      const x2 = cx + Math.cos(a) * (r + 15);
+      const y2 = cy + Math.sin(a) * (r + 15);
+      tickLines += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${line}" stroke-width="2" opacity=".8"/>`;
+    }
+  }
+  return `<svg viewBox="0 0 260 300" role="img" aria-label="饼图，高亮部分占比待估计">
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="${base}" stroke="${line}" stroke-width="1.5"/>
+    <path d="${slice}" fill="${gold}"/>
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${line}" stroke-width="1.5"/>
+    ${tickLines}
+  </svg>`;
+}
+
+async function cmTrial(t, practice) {
+  const hw = watchHidden();
+  $('#cmFb').classList.add('hidden');
+  t.est = null; t.err = null; t.rt = null; t.timeout = 0; t.invalid = 0;
+
+  $('#cmChart').innerHTML = chartSVG(t.format, t.val, t.ticks);
+  const slider = $('#cmSlider');
+  const startVal = 10 + rand(81);
+  slider.value = startVal;
+  $('#cmValue').textContent = startVal;
+
+  await nextFrame();
+  const t0 = performance.now();
+  const r = await waitCM(CM_TIMEOUT, t0);
+
+  t.est = r.est;
+  t.rt = r.rt;
+  t.timeout = r.timeout;
+  t.invalid = (hw.hidden || r.invalid) ? 1 : 0;
+  hw.stop();
+  if (t.est != null) t.err = Math.abs(t.est - t.val);
+
+  if (practice) {
+    $('#cmFb').classList.remove('hidden');
+    if (t.est == null) {
+      $('#cmFb').innerHTML = '<span class="bad">超时</span>';
+    } else {
+      $('#cmFb').innerHTML = `真实值 <b>${t.val}%</b> · 你的估计 <b>${t.est}%</b> · 误差 <b>${t.err}</b> 个百分点`;
+    }
+    await sleep(1200);
+    $('#cmFb').classList.add('hidden');
+  }
+  await sleep(350);
+}
+
+async function runTrial(key, t, practice) {
+  await ensureVisible();
+  if (key === 'search') await searchTrial(t, practice);
+  else if (key === 'flanker') await flankerTrial(t, practice);
+  else await cmTrial(t, practice);
+}
+
+async function runPractice(key) {
+  const list = key === 'search' ? makeSearchPractice()
+    : key === 'flanker' ? makeFlankerPractice()
+    : makeCMPractice();
+  for (let i = 0; i < list.length; i++) {
+    setProgress(`练习 ${i + 1} / ${list.length}`, i / list.length);
+    await runTrial(key, list[i], true);
+  }
+  setProgress('练习完成', 1);
+}
+
+const recorders = {
+  search: (t) => ({
+    cond: t.cond, type: t.type, cue: t.cue, set: t.set, present: t.present,
+    resp: t.resp, correct: t.correct, rt: t.rt, timeout: t.timeout, invalid: t.invalid,
+  }),
+  flanker: (t) => ({
+    cond: t.cond, congruent: t.congruent, dist: t.dist, dir: t.dir,
+    resp: t.resp, correct: t.correct, rt: t.rt, timeout: t.timeout, invalid: t.invalid,
+  }),
+  cm: (t) => ({
+    cond: t.cond, format: t.format, ticks: t.ticks, val: t.val, est: t.est,
+    err: t.err, rt: t.rt, timeout: t.timeout, invalid: t.invalid,
+  }),
+};
+
+async function runFormal(key) {
+  const list = key === 'search' ? makeSearchFormal()
+    : key === 'flanker' ? makeFlankerFormal()
+    : makeCMFormal();
+  state.raw[key] = list;
+  for (let i = 0; i < list.length; i++) {
+    setProgress(`正式 ${i + 1} / ${list.length}`, i / list.length);
+    await runTrial(key, list[i], false);
+  }
+  state.records[key] = list.map(recorders[key]);
+  setProgress('正式试次完成', 1);
+}
+
+/* ============================================================
+   流程
+   ============================================================ */
+function renderBrief(key, idx) {
+  const t = TASKS[key];
+  $('#briefCard').innerHTML = `
+    <div class="brief-head">
+      <span class="mono muted">值班日志 ${String(idx + 1).padStart(2, '0')} / 03</span>
+      <span class="mono gold">${t.code}</span>
+    </div>
+    ${t.brief}
+    <button id="btn-brief-start" class="btn btn-primary">开始练习</button>
+  `;
+  showScreen('brief');
+}
+
+function setTaskHeader(idx, key) {
+  $('#taskIndex').textContent = `值班日志 ${String(idx + 1).padStart(2, '0')} / 03`;
+  $('#taskTitle').textContent = TASKS[key].name;
+}
+
+async function submitExperiment(key) {
+  const recs = state.records[key] || [];
+  if (!recs.length) {
+    state.uploads[key] = { status: 'error', error: '没有试次数据' };
+    return state.uploads[key];
+  }
+  if (!projectConfigured()) {
+    state.uploads[key] = {
+      status: 'error',
+      error: `未配置项目码（PROJECT = '${PROJECT}'），请把 index.html 顶部的 PROJECT 改成 6 位项目码`,
+    };
+    return state.uploads[key];
+  }
+
+  state.uploads[key] = { status: 'pending' };
+  const body = {
+    project: PROJECT,
+    experiment: expName(key),
+    participant: state.pid,
+    condition: '',
+    trials: recs,
+    meta: {
+      pid: state.pid,
+      age: state.age,
+      color_vision: state.colorVision,
+      device: state.device,
+      order: state.order.join('-'),
+      consent: 1,
+      version: VERSION,
+      ua: navigator.userAgent.slice(0, 120),
+      w: innerWidth,
+      h: innerHeight,
+      dpr: Math.round((devicePixelRatio || 1) * 100) / 100,
+      started: state.startedAt,
+    },
+  };
+  const json = JSON.stringify(body);
+  const size = new Blob([json]).size;
+  if (size > 256 * 1024) {
+    state.uploads[key] = { status: 'error', error: `单次提交 ${Math.round(size / 1024)} KB，超过 256 KB 限制` };
+    return state.uploads[key];
+  }
+
+  try {
+    const res = await fetchWithTimeout(LAB + '/api/hw2/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: json,
+    }, 20000);
+    const r = await res.json();
+    if (!r.ok) throw new Error(r.msg || '提交失败');
+    state.uploads[key] = {
+      status: 'ok',
+      participants: r.participants,
+      warnings: r.warnings || null,
+    };
+  } catch (e) {
+    const msg = (e && e.name === 'AbortError') ? '网络超时，请检查网络后重试' : (e.message || '网络错误');
+    state.uploads[key] = { status: 'error', error: msg };
+  }
+  return state.uploads[key];
+}
+
+async function showBreak(key) {
+  const u = state.uploads[key];
+  const ok = u && u.status === 'ok';
+  const idx = state.order.indexOf(key) + 1;
+  $('#breakCard').innerHTML = `
+    <div class="eyebrow">值班日志 ${String(idx).padStart(2, '0')} / 03 完成</div>
+    <h2>${TASKS[key].name} · 完成</h2>
+    <p class="${ok ? 'ok' : 'bad'}">
+      ${ok
+        ? `✓ 数据已上传${u.participants != null ? ` · 全项目 ${u.participants} 人` : ''}`
+        : u && u.status === 'error'
+          ? '✗ 上传失败：' + escapeHtml(u.error)
+          : '上传中…'}
+    </p>
+    ${u && u.warnings ? `<p class="muted">⚠ ${escapeHtml(warningsText(u.warnings))}</p>` : ''}
+    <p class="muted">
+      ${ok ? '可以短暂休息，再继续下一项。' : '数据仍保存在本页，报告页可以重试上传；请不要刷新页面。'}
+    </p>
+    <button id="btn-break-next" class="btn btn-primary">继续下一项</button>
+  `;
+  showScreen('break');
+  await waitButton('btn-break-next');
+}
+
+async function runTask(key, idx) {
+  renderBrief(key, idx);
+  await waitButton('btn-brief-start');
+
+  showScreen('task');
+  showStage(key);
+  setTaskHeader(idx, key);
+  setProgress('准备练习…', 0);
+  await sleep(350);
+
+  await runPractice(key);
+  await modal('练习完成', '正式试次没有对错反馈。请保持准确，不必追求速度；中途请不要刷新页面。', '开始正式试次');
+
+  await runFormal(key);
+  setProgress('正在上传数据…', 1);
+  await submitExperiment(key);
+  hideStages();
+}
+
+async function startSession() {
+  sessionActive = true;
+  for (let i = 0; i < state.order.length; i++) {
+    const key = state.order[i];
+    await runTask(key, i);
+    if (i < state.order.length - 1) await showBreak(key);
+  }
+  await renderReport();
+}
+
+/* ============================================================
+   分析
+   ============================================================ */
+const num = (v) => {
+  if (v === null || v === undefined || v === '') return null;
+  const x = Number(v);
+  return Number.isFinite(x) ? x : null;
+};
+
+function normSearch(t) {
+  return {
+    type: t.type,
+    cue: num(t.cue),
+    set: num(t.set),
+    present: num(t.present),
+    resp: t.resp || '',
+    correct: num(t.correct),
+    rt: num(t.rt),
+    timeout: num(t.timeout) || 0,
+    invalid: num(t.invalid) || 0,
+  };
+}
+function normFlanker(t) {
+  return {
+    congruent: num(t.congruent),
+    dist: t.dist,
+    dir: t.dir,
+    resp: t.resp || '',
+    correct: num(t.correct),
+    rt: num(t.rt),
+    timeout: num(t.timeout) || 0,
+    invalid: num(t.invalid) || 0,
+  };
+}
+function normCM(t) {
+  const val = num(t.val);
+  const est = num(t.est);
+  let err = num(t.err);
+  if (err == null && val != null && est != null) err = Math.abs(est - val);
+  return {
+    format: t.format,
+    ticks: num(t.ticks),
+    val, est, err,
+    rt: num(t.rt),
+    timeout: num(t.timeout) || 0,
+    invalid: num(t.invalid) || 0,
+  };
+}
+
+function searchStats(raw) {
+  const ts = (raw || []).map(normSearch).filter((t) => t.type === 'feature' || t.type === 'conjunction');
+  const pre = ts.filter((t) => t.present === 1 && t.correct === 1 && !t.timeout && !t.invalid && t.rt != null);
+
+  const slopeFor = (type) => {
+    const pts = [];
+    for (const set of SEARCH_SETS) {
+      const rts = pre.filter((t) => t.type === type && t.set === set).map((t) => t.rt);
+      if (rts.length) pts.push([set, median(rts)]);
+    }
+    return slope(pts);
+  };
+  const medRT = (arr) => {
+    const rts = arr.map((t) => t.rt);
+    return rts.length ? median(rts) : null;
+  };
+  const cueBenefitFor = (type) => {
+    const c = pre.filter((t) => t.type === type && t.cue === 1);
+    const n = pre.filter((t) => t.type === type && t.cue === 0);
+    return (c.length && n.length) ? medRT(n) - medRT(c) : null;
+  };
+  const cueFeature = cueBenefitFor('feature');
+  const cueConjunction = cueBenefitFor('conjunction');
+
+  const catches = ts.filter((t) => t.present === 0);
+  const falseAlarm = catches.length ? catches.filter((t) => t.resp === 'J').length / catches.length : null;
+  const hits = ts.filter((t) => t.present === 1);
+  const miss = hits.length ? hits.filter((t) => t.resp !== 'J').length / hits.length : null;
+
+  return {
+    slopeFeature: slopeFor('feature'),
+    slopeConjunction: slopeFor('conjunction'),
+    cueBenefitFeature: cueFeature,
+    cueBenefitConjunction: cueConjunction,
+    cueBenefit: cueConjunction, // 旧字段，保留兼容
+    falseAlarm,
+    miss,
+    n: ts.length,
+  };
+}
+
+function flankerStats(raw) {
+  const ts = (raw || []).map(normFlanker).filter((t) => t.congruent != null);
+  const ok = ts.filter((t) => t.correct === 1 && !t.timeout && !t.invalid && t.rt != null);
+  const med = (con, dist) => {
+    const rts = ok.filter((t) => t.congruent === con && t.dist === dist).map((t) => t.rt);
+    return rts.length ? median(rts) : null;
+  };
+  const effect = (dist) => {
+    const c = med(0, dist), i = med(1, dist);
+    return (c != null && i != null) ? i - c : null;
+  };
+  return {
+    near: effect('near'),
+    far: effect('far'),
+    acc: ts.length ? ok.length / ts.length : null,
+    n: ts.length,
+  };
+}
+
+function cmStats(raw) {
+  const ts = (raw || []).map(normCM).filter((t) => t.format === 'bar' || t.format === 'pie');
+  const ok = ts.filter((t) => !t.timeout && !t.invalid && t.err != null);
+  const avg = (sel) => {
+    const vals = ok.filter(sel).map((t) => t.err);
+    return vals.length ? mean(vals) : null;
+  };
+  return {
+    bar: avg((t) => t.format === 'bar'),
+    pie: avg((t) => t.format === 'pie'),
+    barNo: avg((t) => t.format === 'bar' && t.ticks === 0),
+    barTicks: avg((t) => t.format === 'bar' && t.ticks === 1),
+    pieNo: avg((t) => t.format === 'pie' && t.ticks === 0),
+    pieTicks: avg((t) => t.format === 'pie' && t.ticks === 1),
+    n: ts.length,
+  };
+}
+
+function summarize(arr) {
+  const a = arr.filter((v) => v != null && Number.isFinite(v));
+  if (!a.length) return { mean: null, sd: null, n: 0 };
+  const m = mean(a);
+  const sd = Math.sqrt(a.reduce((s, v) => s + (v - m) * (v - m), 0) / a.length);
+  return { mean: m, sd, n: a.length };
+}
+
+async function loadAll(exp) {
+  const url = `${LAB}/api/hw2/data?project=${encodeURIComponent(PROJECT)}&experiment=${encodeURIComponent(expName(exp))}`;
+  const res = await fetchWithTimeout(url, {}, 15000);
+  const json = await res.json();
+  if (!json.ok) throw new Error(json.msg || '读取失败');
+  return json.records || [];
+}
+
+async function groupStats(key) {
+  const recs = await loadAll(key);
+  const last = new Map();
+  for (const r of recs) {
+    const pid = r.participant || r.participant_id || '?';
+    last.set(pid, r);
+  }
+  const out = [];
+  for (const [pid, r] of last) {
+    let trials = r.trials;
+    if (typeof trials === 'string') {
+      try { trials = JSON.parse(trials); } catch (e) { continue; }
+    }
+    if (!Array.isArray(trials) || !trials.length) continue;
+    const s = key === 'search' ? searchStats(trials)
+      : key === 'flanker' ? flankerStats(trials)
+      : cmStats(trials);
+    out.push({ pid, ...s });
+  }
+  return out;
+}
+
+/* ============================================================
+   报告渲染
+   ============================================================ */
+function stat(label, value, digits, unit) {
+  const has = value != null && Number.isFinite(value);
+  return `<div class="stat"><b>${has ? fmt(value, digits || 0) : '—'}${has && unit ? `<small>${unit}</small>` : ''}</b><span>${label}</span></div>`;
+}
+function warningsText(w) {
+  if (!w) return '';
+  return Array.isArray(w) ? w.join('；') : String(w);
+}
+function chartHTML(title, unit, items) {
+  const vals = items.map((i) => i.value).filter((v) => v != null && Number.isFinite(v));
+  const maxAbs = Math.max(1e-6, ...vals.map((v) => Math.abs(v)));
+  const anyNeg = vals.some((v) => v < 0);
+  const rows = items.map((it) => {
+    const v = it.value;
+    const digits = it.digits == null ? 1 : it.digits;
+    let fill = '';
+    if (v == null || !Number.isFinite(v)) {
+      fill = '';
+    } else {
+      const frac = Math.abs(v) / maxAbs;
+      if (anyNeg) {
+        const w = frac * 50;
+        const left = v >= 0 ? 50 : 50 - w;
+        fill = `<div class="chart-fill" style="left:${left}%;width:${w}%"></div>`;
+      } else {
+        fill = `<div class="chart-fill" style="left:0;width:${frac * 100}%"></div>`;
+      }
+    }
+    const text = (v == null || !Number.isFinite(v)) ? '—' : fmt(v, digits) + (unit ? ' ' + unit : '');
+    return `<div class="chart-row">
+      <div class="chart-label">${it.label}</div>
+      <div class="chart-track" title="${it.label}: ${text}">${anyNeg ? '<i class="zero"></i>' : ''}${fill}</div>
+      <div class="chart-value">${text}</div>
+    </div>`;
+  }).join('');
+  return `<div class="chart" role="img" aria-label="${title}">${rows}</div>`;
+}
+function dataTable(headers, rows) {
+  return `<details class="data-table"><summary>表格视图</summary><table><thead><tr>${headers.map((h, i) => `<th class="${i > 0 ? 'num' : ''}">${h}</th>`).join('')}</tr></thead><tbody>${rows.map((r) => `<tr>${r.map((c, i) => `<td class="${i > 0 ? 'num' : ''}">${c}</td>`).join('')}</tr>`).join('')}</tbody></table></details>`;
+}
+function groupError(name, msg) {
+  return `<div class="group-block"><div class="chart-title">${name}</div><p class="muted">暂时读取不到全舰数据：${escapeHtml(msg)}</p></div>`;
+}
+function groupEmpty(name) {
+  return `<div class="group-block"><div class="chart-title">${name}</div><p class="muted">还没有其他被试的数据。把链接发给同学，或先确认项目码是否正确。</p></div>`;
+}
+
+async function renderGroups() {
+  const meta = $('#groupMeta');
+  const box = $('#groupCharts');
+  if (!meta || !box) return;
+  if (!projectConfigured()) {
+    meta.textContent = '未配置项目码，无法读取全舰数据。';
+    box.innerHTML = '';
+    return;
+  }
+  meta.textContent = '正在读取全舰匿名数据…';
+  const results = {};
+  const settled = await Promise.all(['search', 'flanker', 'cm'].map(async (key) => {
+    try { return { key, stats: await groupStats(key) }; }
+    catch (e) { return { key, error: e.message || '读取失败' }; }
+  }));
+  for (const s of settled) results[s.key] = s;
+
+  let html = '';
+  let nLine = [];
+
+  const s = results.search;
+  if (s.error) html += groupError('组件巡检', s.error);
+  else if (!s.stats.length) html += groupEmpty('组件巡检');
+  else {
+    const st = s.stats;
+    const f = summarize(st.map((x) => x.slopeFeature));
+    const c = summarize(st.map((x) => x.slopeConjunction));
+    const cf = summarize(st.map((x) => x.cueBenefitFeature));
+    const cc = summarize(st.map((x) => x.cueBenefitConjunction));
+    nLine.push(`巡检 N=${st.length}`);
+    html += `<div class="group-block">
+      <div class="chart-title">组件巡检 · 全舰搜索斜率 <span class="muted">N = ${st.length}</span></div>
+      ${chartHTML('全舰搜索斜率', 'ms/项', [
+        { label: '特征搜索', value: f.mean, digits: 1 },
+        { label: '联合搜索', value: c.mean, digits: 1 },
+      ])}
+      ${dataTable(['指标', '均值', 'SD', 'n'], [
+        ['特征搜索（ms/项）', fmt(f.mean, 1), fmt(f.sd, 1), f.n],
+        ['联合搜索（ms/项）', fmt(c.mean, 1), fmt(c.sd, 1), c.n],
+      ])}
+    </div>
+    <div class="group-block">
+      <div class="chart-title">组件巡检 · 全舰线索收益 <span class="muted">N = ${st.length}</span></div>
+      ${chartHTML('全舰线索收益', 'ms', [
+        { label: '特征搜索', value: cf.mean, digits: 0 },
+        { label: '联合搜索', value: cc.mean, digits: 0 },
+      ])}
+      ${dataTable(['指标', '均值', 'SD', 'n'], [
+        ['特征线索收益（ms）', fmt(cf.mean, 1), fmt(cf.sd, 1), cf.n],
+        ['联合线索收益（ms）', fmt(cc.mean, 1), fmt(cc.sd, 1), cc.n],
+      ])}
+    </div>`;
+  }
+
+  const fl = results.flanker;
+  if (fl.error) html += groupError('流向确认', fl.error);
+  else if (!fl.stats.length) html += groupEmpty('流向确认');
+  else {
+    const st = fl.stats;
+    const near = summarize(st.map((x) => x.near));
+    const far = summarize(st.map((x) => x.far));
+    nLine.push(`流向 N=${st.length}`);
+    html += `<div class="group-block">
+      <div class="chart-title">流向确认 · 全舰冲突效应 <span class="muted">N = ${st.length}</span></div>
+      ${chartHTML('全舰冲突效应', 'ms', [
+        { label: '近距', value: near.mean, digits: 0 },
+        { label: '远距', value: far.mean, digits: 0 },
+      ])}
+      ${dataTable(['指标', '均值', 'SD', 'n'], [
+        ['近距冲突效应（ms）', fmt(near.mean, 1), fmt(near.sd, 1), near.n],
+        ['远距冲突效应（ms）', fmt(far.mean, 1), fmt(far.sd, 1), far.n],
+      ])}
+    </div>`;
+  }
+
+  const cm = results.cm;
+  if (cm.error) html += groupError('输出读数', cm.error);
+  else if (!cm.stats.length) html += groupEmpty('输出读数');
+  else {
+    const st = cm.stats;
+    const bn = summarize(st.map((x) => x.barNo));
+    const bt = summarize(st.map((x) => x.barTicks));
+    const pn = summarize(st.map((x) => x.pieNo));
+    const pt = summarize(st.map((x) => x.pieTicks));
+    nLine.push(`读数 N=${st.length}`);
+    html += `<div class="group-block">
+      <div class="chart-title">输出读数 · 全舰平均绝对误差 <span class="muted">N = ${st.length}</span></div>
+      ${chartHTML('全舰读数误差', '百分点', [
+        { label: '条形 · 无刻度', value: bn.mean, digits: 1 },
+        { label: '条形 · 有刻度', value: bt.mean, digits: 1 },
+        { label: '饼图 · 无刻度', value: pn.mean, digits: 1 },
+        { label: '饼图 · 有刻度', value: pt.mean, digits: 1 },
+      ])}
+      ${dataTable(['指标', '均值', 'SD', 'n'], [
+        ['条形 · 无刻度', fmt(bn.mean, 1), fmt(bn.sd, 1), bn.n],
+        ['条形 · 有刻度', fmt(bt.mean, 1), fmt(bt.sd, 1), bt.n],
+        ['饼图 · 无刻度', fmt(pn.mean, 1), fmt(pn.sd, 1), pn.n],
+        ['饼图 · 有刻度', fmt(pt.mean, 1), fmt(pt.sd, 1), pt.n],
+      ])}
+    </div>`;
+  }
+
+  meta.textContent = nLine.length ? `全舰匿名汇总 · ${nLine.join(' · ')}` : '全舰匿名汇总';
+  html += `<p class="group-note">样本量较小时，组均值仅作探索性参考；请结合效应方向与个体数据解读，不要只看显著性。</p>`;
+  box.innerHTML = html;
+}
+
+function uploadLine(key) {
+  const u = state.uploads[key];
+  let text = '未上传';
+  let cls = '';
+  if (u && u.status === 'ok') {
+    text = `✓ 已上传${u.participants != null ? ` · 全项目 ${u.participants} 人` : ''}${u.warnings ? ` · ⚠ ${warningsText(u.warnings)}` : ''}`;
+    cls = 'ok';
+  } else if (u && u.status === 'error') {
+    text = `✗ 上传失败：${u.error}`;
+    cls = 'bad';
+  } else if (u && u.status === 'pending') {
+    text = '上传中…';
+  }
+  return `<div class="upload-row">
+    <span class="mono">${TASKS[key].name}</span>
+    <span class="${cls}">${escapeHtml(text)}</span>
+    ${u && u.status === 'error' ? `<button class="btn btn-ghost btn-sm" data-retry="${key}">重试</button>` : ''}
+  </div>`;
+}
+
+async function renderReport() {
+  sessionActive = false;
+  showScreen('report');
+  const ps = searchStats(state.raw.search || []);
+  const pf = flankerStats(state.raw.flanker || []);
+  const pc = cmStats(state.raw.cm || []);
+
+  $('#reportBody').innerHTML = `
+    <div class="card report-head">
+      <div class="eyebrow">质检报告 · AVALON</div>
+      <h1>工号 <span class="pid-big">${escapeHtml(state.pid)}</span></h1>
+      <p class="muted">值班完成 · 三项任务 · 数据按匿名工号上传到注意实验室</p>
+    </div>
+
+    <div class="card">
+      <div class="eyebrow">01 · 组件巡检</div>
+      <h3>搜索效率</h3>
+      <div class="stats">
+        ${stat('特征搜索斜率', ps.slopeFeature, 1, 'ms/项')}
+        ${stat('联合搜索斜率', ps.slopeConjunction, 1, 'ms/项')}
+        ${stat('特征 + 线索收益', ps.cueBenefitFeature, 0, 'ms')}
+        ${stat('联合 + 线索收益', ps.cueBenefitConjunction, 0, 'ms')}
+        ${stat('无故障虚报率', ps.falseAlarm == null ? null : ps.falseAlarm * 100, 0, '%')}
+        ${stat('故障漏报率', ps.miss == null ? null : ps.miss * 100, 0, '%')}
+      </div>
+      <table>
+        <tr><th>指标</th><th class="num">你的结果</th><th>参考/原文</th></tr>
+        <tr><td>特征搜索斜率</td><td class="num">${fmt(ps.slopeFeature, 1)} ms/项</td><td>接近平（常见 0–10 ms/项）</td></tr>
+        <tr><td>联合搜索斜率</td><td class="num">${fmt(ps.slopeConjunction, 1)} ms/项</td><td>明显更陡（常见 20–40 ms/项）</td></tr>
+        <tr><td>特征 + 线索收益</td><td class="num">${fmt(ps.cueBenefitFeature, 0)} ms</td><td>预测：较小或无</td></tr>
+        <tr><td>联合 + 线索收益</td><td class="num">${fmt(ps.cueBenefitConjunction, 0)} ms</td><td>预测：较大（线索主要帮助联合搜索）</td></tr>
+      </table>
+      <p class="muted">线索收益 = 无线索 RT − 有效线索 RT；正值表示线索有帮助。参考值为常见复现范围，具体以原文与课堂材料为准。</p>
+    </div>
+
+    <div class="card">
+      <div class="eyebrow">02 · 流向确认</div>
+      <h3>冲突效应</h3>
+      <div class="stats">
+        ${stat('近距冲突效应', pf.near, 0, 'ms')}
+        ${stat('远距冲突效应', pf.far, 0, 'ms')}
+        ${stat('正确率', pf.acc == null ? null : pf.acc * 100, 0, '%')}
+      </div>
+      <table>
+        <tr><th>指标</th><th class="num">你的结果</th><th>参考/原文</th></tr>
+        <tr><td>近距冲突效应</td><td class="num">${fmt(pf.near, 0)} ms</td><td>通常为几十毫秒量级</td></tr>
+        <tr><td>远距冲突效应</td><td class="num">${fmt(pf.far, 0)} ms</td><td>预测：小于近距，甚至消失</td></tr>
+      </table>
+      <p class="muted">冲突效应 = 不一致 RT − 一致 RT；正值表示旁侧箭头造成干扰。</p>
+    </div>
+
+    <div class="card">
+      <div class="eyebrow">03 · 输出读数</div>
+      <h3>估读误差</h3>
+      <div class="stats">
+        ${stat('条形 · 无刻度', pc.barNo, 1, '百分点')}
+        ${stat('条形 · 有刻度', pc.barTicks, 1, '百分点')}
+        ${stat('饼图 · 无刻度', pc.pieNo, 1, '百分点')}
+        ${stat('饼图 · 有刻度', pc.pieTicks, 1, '百分点')}
+      </div>
+      <table>
+        <tr><th>指标</th><th class="num">你的结果</th><th>参考/原文</th></tr>
+        <tr><td>条形图误差</td><td class="num">${fmt(pc.bar, 1)} 百分点</td><td>位置/长度编码通常更准</td></tr>
+        <tr><td>饼图误差</td><td class="num">${fmt(pc.pie, 1)} 百分点</td><td>角度/面积编码通常较差</td></tr>
+        <tr><td>刻度收益（饼图）</td><td class="num">${pc.pieNo != null && pc.pieTicks != null ? fmt(pc.pieNo - pc.pieTicks, 1) : '—'} 百分点</td><td>预测：刻度降低饼图误差</td></tr>
+      </table>
+      <p class="muted">误差 = |你的估计 − 真实比例| 的平均值（百分点）。</p>
+    </div>
+
+    <div class="card">
+      <div class="eyebrow">全舰汇总</div>
+      <p class="muted" id="groupMeta">正在读取全舰匿名数据…</p>
+      <div id="groupCharts"></div>
+    </div>
+
+    <div class="card">
+      <div class="eyebrow">给界面设计的三条建议</div>
+      <ol class="recs">
+        <li><b>关键目标用独特特征。</b>如果目标只能靠“颜色 + 形状”的联合特征定义，搜索会明显变慢；用单例特征，或给一个空间线索/高亮区域。</li>
+        <li><b>冲突信息要空间分离。</b>相邻通道、相邻标签中方向或含义相反的信息会增加反应竞争；在布局上拉开距离，或只保留一个主指示。</li>
+        <li><b>精确读数优先用位置/长度编码。</b>条形图通常比饼图更准；如果必须用角度/面积，加刻度线或参考线来锚定估计。</li>
+      </ol>
+    </div>
+
+    <div class="card">
+      <div class="eyebrow">数据状态</div>
+      <div class="upload-list">
+        ${['search', 'flanker', 'cm'].map(uploadLine).join('')}
+      </div>
+      <button id="btnBackup" class="btn btn-ghost">下载本地备份 CSV</button>
+      <p class="fine">上传失败时请点击“重试”。请不要刷新页面：刷新后本页未提交的数据会丢失。</p>
+    </div>
+
+    <div class="end-note">实验结束 · 感谢你的参与 · ${escapeHtml(state.pid)}</div>
+  `;
+
+  $('#btnBackup').onclick = downloadBackup;
+  $$('[data-retry]').forEach((b) => {
+    b.onclick = async () => {
+      b.disabled = true;
+      b.textContent = '重试中…';
+      await submitExperiment(b.dataset.retry);
+      await renderReport();
+    };
+  });
+
+  await renderGroups();
+}
+
+/* ============================================================
+   本地备份
+   ============================================================ */
+function downloadBackup() {
+  const all = [];
+  for (const key of ['search', 'flanker', 'cm']) {
+    for (const t of (state.records[key] || [])) {
+      all.push({ participant: state.pid, experiment: key, ...t });
+    }
+  }
+  if (!all.length) {
+    modal('没有数据', '本页还没有可备份的试次。', '知道了');
+    return;
+  }
+  const headers = [];
+  for (const o of all) for (const k of Object.keys(o)) if (!headers.includes(k)) headers.push(k);
+  const cell = (v) => {
+    if (v == null) return '';
+    const s = String(v);
+    return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  };
+  const csv = [headers.join(',')].concat(all.map((o) => headers.map((h) => cell(o[h])).join(','))).join('\n');
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `avalon_${state.pid}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+/* ============================================================
+   启动
+   ============================================================ */
+function boot() {
+  initSearchGrid();
+  $('#pidText').textContent = state.pid;
+  if (!projectConfigured()) $('#configWarn').classList.remove('hidden');
+  if (TEST_MODE) $('#testWarn').classList.remove('hidden');
+
+  $('#consentCheck').addEventListener('change', (e) => {
+    $('#btnConsent').disabled = !e.target.checked;
+  });
+  $('#btnConsent').onclick = () => showScreen('intake');
+
+  const updateDeviceWarn = () => {
+    const v = $('#device').value;
+    $('#deviceWarn').classList.toggle('hidden', !(v === 'tablet' || v === 'phone'));
+  };
+  $('#device').addEventListener('change', updateDeviceWarn);
+  updateDeviceWarn();
+
+  $('#btnBegin').onclick = () => {
+    state.age = $('#age').value;
+    state.colorVision = $('#colorVision').value;
+    state.device = $('#device').value;
+    state.order = shuffle(['search', 'flanker', 'cm']);
+    startSession().catch((err) => {
+      console.error(err);
+      modal('运行出错', escapeHtml(err.message || '未知错误') + '<br><br>请刷新页面重新开始。', '知道了');
+    });
+  };
+
+  $('#cmSlider').addEventListener('input', (e) => {
+    $('#cmValue').textContent = e.target.value;
+  });
+}
+
+boot();
+</script>
+</body>
+</html>

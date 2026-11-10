@@ -1,0 +1,12 @@
+# Local assignment materials
+作业2要求/
+shot-consent.png
+build_canvas.js
+*.canvas
+工程心理学作业2_脑图索引.md
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
