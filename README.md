@@ -13,6 +13,7 @@
 | 技术栈 | 纯 HTML + CSS + JavaScript，无构建步骤、无后端依赖 |
 | 数据接口 | `https://attention-lab-production.up.railway.app/api/hw2/submit` |
 | 本 README 状态 | 正式收数前的预注册版本；结果部分只保留真实数据位置，不填虚构数值 |
+| 部署状态 | 已发布到 GitHub Pages，并通过线上页面与项目码核对 |
 
 ### 作业要求对应关系
 
@@ -24,7 +25,7 @@
 - [x] `/hw2` 项目和项目码接入网页。
 - [x] README 包含实验说明、预测、项目码、结果与讨论、AI 使用说明、运行方法。
 - [ ] 至少收集 5 名他人的数据，并用真实数据补全结果与讨论。
-- [ ] 将最终版本推送到 GitHub，并在 Settings → Pages 中选择 `main` / root。
+- [x] 已将当前版本推送到 GitHub，并在 Settings → Pages 中选择 `main` / root。
 
 ---
 
@@ -469,9 +470,9 @@ cond, format, ticks, val, est, err, rt, timeout, invalid
 - [ ] 至少找 5 名他人独立完成全部三项实验。
 - [ ] 从 `/hw2` 下载 CSV/JSON，保留原始文件。
 - [ ] 用真实数据填写结果与讨论，不使用演示值。
-- [ ] 将代码和 README 推送到公开 GitHub 仓库。
-- [ ] 启用 `main` / root 的 GitHub Pages。
-- [ ] 打开线上链接，确认项目码、三项任务和结束页正常显示。
+- [x] 将代码和 README 推送到公开 GitHub 仓库。
+- [x] 启用 `main` / root 的 GitHub Pages。
+- [x] 打开线上链接，确认项目码、三项任务和结束页正常显示。
 
 ---
 
